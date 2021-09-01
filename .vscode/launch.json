@@ -12,6 +12,7 @@
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/bin/Debug/net5.0/cat-compare.dll",
             "args": [
+                "-d=/Users/donblas/Programming/macios/master/xamarin-macios/tests/xtro-sharpie",
                 "Foundation",
                 "-v",
                 "-v"

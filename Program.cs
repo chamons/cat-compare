@@ -6,6 +6,7 @@ using Mono.Options;
 namespace cat_compare {
 	class Program {
 		static int Verbosity = 0;
+        static string? Directory;
 
 		static void Die (string message)
 		{
@@ -38,8 +39,6 @@ namespace cat_compare {
 			return File.ReadAllLines (file);
 		}
 
-		static string BaseDir => $"{AppContext.BaseDirectory}../../../..";
-
         static HashSet<string> ProcessXtroFile (string [] ? contents) 
         {
             var set = new HashSet<string>();
@@ -60,11 +59,11 @@ namespace cat_compare {
 
 		static void Process (string name)
 		{
-			string [] todoLines = ReadFile ($"{BaseDir}/MacCatalyst-{name}.todo", "todo");
+			string [] todoLines = ReadFile ($"{Directory!}/MacCatalyst-{name}.todo", "todo");
            
-            var iOSTodo = ProcessXtroFile (ReadFileIfExists($"{BaseDir}/iOS-{name}.todo", "iOS todo"));
-            var iOSIgnore = ProcessXtroFile (ReadFileIfExists($"{BaseDir}/iOS-{name}.ignore", "iOS ignore"));
-            var macTodo = ProcessXtroFile (ReadFileIfExists($"{BaseDir}/macOS-{name}.todo", "macOS todo"));
+            var iOSTodo = ProcessXtroFile (ReadFileIfExists($"{Directory!}/iOS-{name}.todo", "iOS todo"));
+            var iOSIgnore = ProcessXtroFile (ReadFileIfExists($"{Directory!}/iOS-{name}.ignore", "iOS ignore"));
+            var macTodo = ProcessXtroFile (ReadFileIfExists($"{Directory!}/macOS-{name}.todo", "macOS todo"));
 
             int iOSTodoSkipCounter = 0;
             int iOSIgnoreSkipCounter = 0;
@@ -91,9 +90,10 @@ namespace cat_compare {
 		{
 			var options = new OptionSet {
 				{ "v", "increase debug message verbosity", v => { if (v != null) ++Verbosity; } },
+                { "d=", "directory with todo files", d => Directory = d}
 			};
 			List<string> extra = options.Parse (args);
-			if (extra.Count != 1) {
+			if (extra.Count != 1 || Directory == null) {
 				Console.Error.WriteLine ("cat_compare [API]");
 				Console.Error.WriteLine ("e.g.: cat_compare AVFoundation");
 				return -1;
