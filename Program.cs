@@ -57,7 +57,7 @@ namespace cat_compare {
 			return false;
 		}
 
-		static void Process (string name)
+		static int Process (string name)
 		{
 			string [] todoLines = ReadFile ($"{Directory!}/MacCatalyst-{name}.todo", "todo");
 		   
@@ -87,11 +87,13 @@ namespace cat_compare {
 			if (!Skip && Verbosity > 0) {
 				Console.WriteLine();
 			}
-			Message($"Original Lines: {todoLines.Length}");
+			Message($"Orignal Lines: {todoLines.Length}");
+			Message($"Kept Lines: {keptCounter}");
 			Message($"Removed Lines: {todoLines.Length - keptCounter}");
 			Message($"Skipped due to iOS todo: {iOSTodoSkipCounter}");
 			Message($"Skipped due to iOS ignore: {iOSIgnoreSkipCounter}");
 			Message($"Skipped due to macOS todo: {macTodoSkipCounter}");
+			return keptCounter == 0 ? 0 : 1;
 		}
 
 		static int Main (string [] args)
@@ -105,10 +107,9 @@ namespace cat_compare {
 			if (extra.Count != 1 || Directory == null) {
 				Console.Error.WriteLine ("cat_compare [API]");
 				Console.Error.WriteLine ("e.g.: cat_compare AVFoundation");
-				return -1;
+				Environment.Exit(-1);
 			}
-			Process (extra [0]);
-			return 0;
+			return Process (extra [0]);
 		}
 	}
 }
