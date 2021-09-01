@@ -68,6 +68,7 @@ namespace cat_compare {
 			int iOSTodoSkipCounter = 0;
 			int iOSIgnoreSkipCounter = 0;
 			int macTodoSkipCounter = 0;
+			int keptCounter = 0;
 
 			foreach (var line in todoLines) {
 				if (line.StartsWith("!")) {
@@ -78,6 +79,7 @@ namespace cat_compare {
 						continue;
 					}
 				}
+				keptCounter +=1;
 				if (!Skip) {
 					Console.WriteLine(line);
 				}
@@ -86,6 +88,7 @@ namespace cat_compare {
 				Console.WriteLine();
 			}
 			Message($"Original Lines: {todoLines.Length}");
+			Message($"Removed Lines: {todoLines.Length - keptCounter}");
 			Message($"Skipped due to iOS todo: {iOSTodoSkipCounter}");
 			Message($"Skipped due to iOS ignore: {iOSIgnoreSkipCounter}");
 			Message($"Skipped due to macOS todo: {macTodoSkipCounter}");
