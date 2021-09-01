@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Mono.Options;
+
 namespace cat_compare {
 	class Program {
 		static int Verbosity = 0;
 		static string? Directory;
+		static bool Skip = false;
 
 		static void Die (string message)
 		{
@@ -24,7 +26,6 @@ namespace cat_compare {
 		static string []? ReadFileIfExists (string file, string friendlyName)
 		{
 			if (File.Exists (file)) {
-				Message ($"Found {friendlyName} at {file}");
 				return File.ReadAllLines (file);
 			}
 			return null;
@@ -35,7 +36,6 @@ namespace cat_compare {
 			if (!File.Exists (file)) {
 				Die ($"Can not find {friendlyName} at: {file}");
 			}
-			Message ($"Found {friendlyName} at {file}");
 			return File.ReadAllLines (file);
 		}
 
@@ -78,9 +78,14 @@ namespace cat_compare {
 						continue;
 					}
 				}
-				Console.WriteLine(line);
+				if (!Skip) {
+					Console.WriteLine(line);
+				}
 			}
-			Message($"\nOriginal Lines: {todoLines.Length}");
+			if (!Skip && Verbosity > 0) {
+				Console.WriteLine();
+			}
+			Message($"Original Lines: {todoLines.Length}");
 			Message($"Skipped due to iOS todo: {iOSTodoSkipCounter}");
 			Message($"Skipped due to iOS ignore: {iOSIgnoreSkipCounter}");
 			Message($"Skipped due to macOS todo: {macTodoSkipCounter}");
@@ -90,7 +95,8 @@ namespace cat_compare {
 		{
 			var options = new OptionSet {
 				{ "v", "increase debug message verbosity", v => { if (v != null) ++Verbosity; } },
-				{ "d=", "directory with todo files", d => Directory = d}
+				{ "d=", "directory with todo files", d => Directory = d},
+				{ "s", "skip ouput of non-ignored lines", s => Skip = true}
 			};
 			List<string> extra = options.Parse (args);
 			if (extra.Count != 1 || Directory == null) {
