@@ -106,7 +106,7 @@ namespace cat_compare {
 			List<string> extra = options.Parse (args);
 			if (extra.Count != 1 || Directory == null) {
 				Console.Error.WriteLine ("cat_compare [API]");
-				Console.Error.WriteLine ("e.g.: cat_compare AVFoundation");
+				options.WriteOptionDescriptions (Console.Out);
 				Environment.Exit(-1);
 			}
 			return Process (extra [0]);
